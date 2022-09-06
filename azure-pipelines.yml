@@ -6,7 +6,7 @@ steps:
 - task: Gradle@3
   inputs:
     gradleWrapperFile: 'gradlew'
-    tasks: 'build jacocoTestReport'
+    tasks: 'build test'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
@@ -27,12 +27,6 @@ steps:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: appJar
     publishLocation: 'Container'
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish artifact'
-  inputs:
-    codeCoverageTool: 'JaCoCo' 
-    summaryFileLocation: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/jacocoTestReport.xml'
-    reportDirectory: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/html'
 - task: DownloadBuildArtifacts@0
   inputs:
     buildType: 'current'
