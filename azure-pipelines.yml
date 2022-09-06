@@ -44,7 +44,7 @@ steps:
   inputs:
     SonarCloud: 'Sonarcloud'
     organization: 'fundamentos-devops-usach'
-    scannerMode: 'MSBuild'
+    #scannerMode: 'MSBuild'
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
     extraProperties: 'sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml'
@@ -55,8 +55,7 @@ steps:
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
-    sonarQubeRunAnalysis: false
+    sonarQubeRunAnalysis: true
     sqGradlePluginVersionChoice: 'specify'
     sonarQubeGradlePluginVersion: '3.3'
     spotBugsAnalysis: false
-    
