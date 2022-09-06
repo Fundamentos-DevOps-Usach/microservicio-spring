@@ -1,9 +1,7 @@
 pool:
   vmImage: ubuntu-latest
-
 trigger: 
 - feature-ms-raulRiquelme-labFinal 
-
 steps:
 - task: Gradle@3
   inputs:
@@ -23,14 +21,18 @@ steps:
         **/build/libs/*.jar
         **/build/**/*.xml
     targetFolder: '$(Build.ArtifactStagingDirectory)'
-
 - task: PublishBuildArtifacts@1
   displayName: 'Publish artifact'
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: appJar
     publishLocation: 'Container'
-
+- task: PublishCodeCoverageResults@1
+  displayName: 'Publish artifact'
+  inputs:
+    codeCoverageTool: 'JaCoCo' 
+    summaryFileLocation: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/html'
 - task: DownloadBuildArtifacts@0
   inputs:
     buildType: 'current'
@@ -38,3 +40,4 @@ steps:
     artifactName: 'appJar'
     downloadPath: '$(Pipeline.Workspace)'
   displayName: Descarga Jar
+  
