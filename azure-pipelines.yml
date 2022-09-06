@@ -40,4 +40,11 @@ steps:
     artifactName: 'appJar'
     downloadPath: '$(Pipeline.Workspace)'
   displayName: Descarga Jar
-  
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'Sonarcloud'
+    organization: 'fundamentos-devops-usach'
+    scannerMode: 'MSBuild'
+    projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
+    projectName: 'microservicio-spring'
+    extraProperties: 'sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml'
