@@ -76,6 +76,9 @@ steps:
 - task: Docker@2
   inputs:
     containerRegistry: 'DockerRegistryFundamentosDevOps'
-    repository: 'fundamentos-dev-ops-usach'
+    repository: 'fundamentos-dev-ops-usach/lab-final'
     command: 'buildAndPush'
+    tags: |
+          v$(Build.BuildId)
+          latest
     Dockerfile: '**/Dockerfile'
