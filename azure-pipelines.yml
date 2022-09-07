@@ -6,7 +6,7 @@ steps:
 - task: Gradle@3
   inputs:
     gradleWrapperFile: 'gradlew'
-    tasks: 'jacocoTestReport'
+    tasks: 'build jacocoTestReport'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     javaHomeOption: 'JDKVersion'
@@ -47,7 +47,7 @@ steps:
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
-      tasks: 'jacocoTestReport'
+      tasks: 'build jacocoTestReport'
       javaHomeOption: 'JDKVersion'
       sonarQubeRunAnalysis: true
       sqGradlePluginVersionChoice: 'specify'
