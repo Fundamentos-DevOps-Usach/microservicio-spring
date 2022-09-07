@@ -68,4 +68,14 @@ steps:
       downloadPath: '$(Pipeline.Workspace)'
       
 - script: 'mkdir -p build/libs; mv $(Pipeline.Workspace)/appJar/build/libs/ build/; chmod -R 555 build/libs'
-  displayName: 'Artifact prepare'  
+  displayName: 'Artifact prepare' 
+- task: Docker@2
+  inputs:
+    containerRegistry: 'DockerRegistryFundamentosDevOps'
+    command: 'login'
+- task: Docker@2
+  inputs:
+    containerRegistry: 'DockerRegistryFundamentosDevOps'
+    repository: 'fundamentos-dev-ops-usach'
+    command: 'buildAndPush'
+    Dockerfile: '**/Dockerfile'
