@@ -97,6 +97,7 @@ stages:
               v$(Build.BuildId)
               latest
         Dockerfile: '**/Dockerfile'
+        
   - job: infrastructura
     dependsOn: buildImage
     steps:     
