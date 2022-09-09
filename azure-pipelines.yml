@@ -183,7 +183,7 @@ stages:
         azureResourceGroup: 'DevOpsFoundation'
         kubernetesCluster: 'labFinal'
         namespace: 'default'
-        command: 'set'
+        command: 'expose'
         arguments: 'deployment lab-deployment --type=LoadBalancer --name=lab-app'
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
