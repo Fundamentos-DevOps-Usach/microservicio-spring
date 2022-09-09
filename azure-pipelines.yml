@@ -183,12 +183,12 @@ stages:
         kubernetesCluster: 'labFinal'
         namespace: 'default'
         command: 'expose'
-        arguments: 'deployment lab-deployment --type=LoadBalancer --name=labFinal'
+        arguments: 'deployment lab-deployment --type=LoadBalancer --name=lab-app'
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
         azureSubscriptionEndpointForSecrets: 'azureSubscription'
     - script: |
-          ipApp=$(kubectl get services labFinal --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          ipApp=$(kubectl get services lab-app --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo $ipApp
           URLApp=http://$ipApp:8085
           echo $URLApp
