@@ -175,6 +175,7 @@ stages:
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
         azureSubscriptionEndpointForSecrets: 'azureSubscription'
+
     - task: Kubernetes@1
       inputs:
         connectionType: 'Azure Resource Manager'
@@ -182,7 +183,7 @@ stages:
         azureResourceGroup: 'DevOpsFoundation'
         kubernetesCluster: 'labFinal'
         namespace: 'default'
-        command: 'expose'
+        command: 'set'
         arguments: 'deployment lab-deployment --type=LoadBalancer --name=lab-app'
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
