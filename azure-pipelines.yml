@@ -106,6 +106,50 @@ stages:
         terraformVersion: '1.2.3'
       displayName: Instalacion Terraform
 
+    - script: |
+          ssh-keygen -t rsa -b 4096 -N "VeryStrongSecret123!" -C "$(CORREO)" -q -f ~/.ssh/id_rsa
+          SSH_KEY=$(cat ~/.ssh/id_rsa.pub)
+          echo $SSH_KEY
+          echo "##vso[task.setvariable variable=SET_SSH;isOutput=true]$SSH_KEY"
+      name: setssh
+      displayName: Configuracion SSH
+    - task: TerraformCLI@0
+      inputs:
+        command: 'init'
+        backendType: 'azurerm'
+        backendServiceArm: 'azureSubscription'
+        allowTelemetryCollection: true
+      displayName: Terraform init
+      continueOnError: true
+    - task: TerraformCLI@0
+      inputs:
+        command: 'plan'
+        environmentServiceName: 'azureSubscription'
+        commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
+        allowTelemetryCollection: true
+      displayName: Terraform plan
+      continueOnError: true
+    - task: TerraformCLI@0
+      inputs:
+        command: 'import'
+        environmentServiceName: 'azureSubscription'
+        runAzLogin: true
+        commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
+        allowTelemetryCollection: true
+        resourceAddress: 'module.cluster.azurerm_resource_group.aks-getting-started'
+      continueOnError: true
+      displayName: Terraform import
+      
+    - task: TerraformCLI@0
+      inputs:
+        command: 'apply'
+        environmentServiceName: 'azureSubscription'
+        runAzLogin: true
+        commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
+        allowTelemetryCollection: true
+      displayName: Terraform apply
+      continueOnError: true
+
   - job: AKS
     dependsOn: infrastructura
     steps:
