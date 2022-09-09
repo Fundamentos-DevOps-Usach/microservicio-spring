@@ -187,6 +187,7 @@ stages:
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
         azureSubscriptionEndpointForSecrets: 'azureSubscription'
+      continueOnError: true
     - script: |
           ipApp=$(kubectl get services lab-app --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
           echo $ipApp
