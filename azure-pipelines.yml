@@ -156,3 +156,42 @@ stages:
     - task: KubectlInstaller@0
       inputs:
         kubectlVersion: 'latest'
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: 'azureSubscription'
+        azureResourceGroup: 'DevOpsFoundation'
+        kubernetesCluster: 'labFinal'
+        namespace: 'default'
+        command: 'login'
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: 'azureSubscription'
+        azureResourceGroup: 'DevOpsFoundation'
+        kubernetesCluster: 'labFinal'
+        command: 'apply'
+        arguments: '-f kubernetes/deployment-app.yaml'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+        azureSubscriptionEndpointForSecrets: 'azureSubscription'
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Azure Resource Manager'
+        azureSubscriptionEndpoint: 'azureSubscription'
+        azureResourceGroup: 'DevOpsFoundation'
+        kubernetesCluster: 'labFinal'
+        namespace: 'default'
+        command: 'expose'
+        arguments: 'deployment labFinal-deployment --type=LoadBalancer --name=labFinal'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+        azureSubscriptionEndpointForSecrets: 'azureSubscription'
+    - script: |
+          ipApp=$(kubectl get services labFinal --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          echo $ipApp
+          URLApp=http://$ipApp:8085
+          echo $URLApp
+          echo "##vso[task.setvariable variable=appDeploy;isOutput=true]$URLApp"
+      name: getip
+      displayName: Get IP
