@@ -183,7 +183,7 @@ stages:
         kubernetesCluster: 'labFinal'
         namespace: 'default'
         command: 'expose'
-        arguments: 'deployment labFinal-deployment --type=LoadBalancer --name=labFinal'
+        arguments: 'deployment lab-deployment --type=LoadBalancer --name=labFinal'
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
         azureSubscriptionEndpointForSecrets: 'azureSubscription'
