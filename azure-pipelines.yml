@@ -36,14 +36,14 @@ steps:
   displayName: Descarga Jar
 - task: SonarCloudPrepare@1
   inputs:
-    scannerMode: 'MSBuild'
     SonarCloud: 'Sonarcloud'
     organization: 'fundamentos-devops-usach'
     #scannerMode: 'MSBuild'
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
-    extraProperties: |
-        sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
+    scannerMode: 'Other'
+    extraProperties: 'sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml'
+
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
