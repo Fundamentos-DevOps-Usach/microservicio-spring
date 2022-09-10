@@ -48,6 +48,9 @@ stages:
         cd $(Pipeline.Workspace)
         echo estamos en $(Pipeline.Workspace)
         ls 
+        echo appJar 
+        cd $(Pipeline.Workspace)/appJar
+        ls
       displayName: 'Run a multi-line script'
     
     - task: SonarCloudPrepare@1
