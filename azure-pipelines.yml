@@ -47,7 +47,7 @@ stages:
     - script: |
         cd $(Pipeline.Workspace)
         echo estamos en $(Pipeline.Workspace)
-        ll 
+        ls 
       displayName: 'Run a multi-line script'
     
     - task: SonarCloudPrepare@1
