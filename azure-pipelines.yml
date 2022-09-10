@@ -39,6 +39,14 @@ stages:
         artifactName: 'appJar'
         downloadPath: '$(Pipeline.Workspace)'
       displayName: Descarga Jar
+    - script: |
+        cd $(Pipeline.Workspace)
+        echo estamos en $(Pipeline.Workspace)
+        ls 
+        echo appJar 
+        cd $(Pipeline.Workspace)/appJar
+        ls
+      displayName: 'Run a multi-line script'
 - stage: Test
   jobs:
   - job: sonar
@@ -72,6 +80,13 @@ stages:
           sqGradlePluginVersionChoice: 'specify'
           sonarQubeGradlePluginVersion: '3.3'
       displayName: 'SonarQube run'
+    - script: |
+        cd $(Pipeline.Workspace)
+        echo estamos en $(Pipeline.Workspace)
+        ls 
+        echo appJar 
+        cd $(Pipeline.Workspace)/appJar
+        ls
     - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
