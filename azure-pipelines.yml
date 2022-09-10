@@ -38,20 +38,18 @@ steps:
   inputs:
     SonarCloud: 'Sonarcloud'
     organization: 'fundamentos-devops-usach'
-    scannerMode: 'MSBuild'
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
-    extraProperties: 'sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml'
-
+    extraProperties: |
+      sonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml- task: SonarCloudPrepare@1
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
-      tasks: 'build jacocoTestReport'
+      tasks: 'jacocoTestReport'
       javaHomeOption: 'JDKVersion'
       sonarQubeRunAnalysis: true
       sqGradlePluginVersionChoice: 'specify'
       sonarQubeGradlePluginVersion: '3.3'
-  displayName: 'SonarQube run'
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
