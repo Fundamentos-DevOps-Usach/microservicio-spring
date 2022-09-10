@@ -43,9 +43,7 @@ steps:
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
     extraProperties: |
-        sonar.coverage.jacoco.xmlReportPaths=$(Build.ArtifactStagingDirectory)/build/reports/jacoco/test/jacocoTestReport.xml
-      #$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
-      
+        sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
