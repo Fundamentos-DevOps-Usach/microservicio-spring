@@ -26,19 +26,28 @@ steps:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
     artifactName: appJar
     publishLocation: 'Container'
-# - task: DownloadBuildArtifacts@0
-#   inputs:
-#     buildType: 'current'
-#     downloadType: 'single'
-#     artifactName: 'appJar'
-#     downloadPath: '$(Pipeline.Workspace)'
-#   displayName: Descarga Jar
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: '$(Build.SourcesDirectory)/build/reports/jacoco/test/html'
+- task: DownloadBuildArtifacts@0
+  inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'appJar'
+      downloadPath: '$(Pipeline.Workspace)'
+  displayName: Descarga Jar
+
 - script: |
     echo $(Build.ArtifactStagingDirectory)
     cd $(Build.ArtifactStagingDirectory)
     ls -l
     echo $(Build.SourcesDirectory)
     cd $(Build.SourcesDirectory)
+    ls -l
+    echo $(Pipeline.Workspace)
+    cd $(Pipeline.Workspace)
     ls -l
 - task: SonarCloudPrepare@1
   inputs:
@@ -48,7 +57,7 @@ steps:
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
     extraProperties: |
-      sonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml
+      sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
@@ -57,11 +66,7 @@ steps:
       sonarQubeRunAnalysis: true
       sqGradlePluginVersionChoice: 'specify'
       sonarQubeGradlePluginVersion: '3.3'
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'JaCoCo'
-    summaryFileLocation: '$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml'
-    reportDirectory: '$(Build.SourcesDirectory)/build/reports/jacoco/test/html'
+
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
