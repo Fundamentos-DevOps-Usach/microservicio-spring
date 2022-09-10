@@ -40,13 +40,16 @@ steps:
     organization: 'fundamentos-devops-usach'
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
+    scannerMode: 'Other'
     extraProperties: |
-      sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
+      sonar.projectName=Sample Gradle project with Azure DevOps
+      sonar.projectKey=gradle-on-azdo
+      sonar.coverage.jacoco.xmlReportPaths=CCReport43F6D5EF/summary.xml
 
 - task: Gradle@3
   inputs:
     gradleWrapperFile: 'gradlew'
-    tasks: 'build jacocoTestReport'
+    tasks: 'build'
     publishJUnitResults: true
     testResultsFiles: '**/TEST-*.xml'
     codeCoverageToolOption: 'JaCoCo'
