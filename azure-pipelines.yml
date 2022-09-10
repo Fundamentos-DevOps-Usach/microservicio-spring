@@ -44,6 +44,12 @@ stages:
   - job: sonar
     displayName: Code Review
     steps:
+    - script: |
+        cd $(Pipeline.Workspace)
+        echo estamos en $(Pipeline.Workspace)
+        ll 
+      displayName: 'Run a multi-line script'
+    
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: 'Sonarcloud'
@@ -52,7 +58,7 @@ stages:
         projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
         projectName: 'microservicio-spring'
         extraProperties: |
-            sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
+            sonar.coverage.jacoco.xmlReportPaths=#$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
     - task: Gradle@3
       inputs:
           gradleWrapperFile: 'gradlew'
