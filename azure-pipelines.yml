@@ -24,8 +24,13 @@ steps:
   displayName: 'Publish artifact'
   inputs:
     pathToPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: appJar
+    artifactName: 
     publishLocation: 'Container'
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: '$(Build.ArtifactStagingDirectory)/reports/jacoco/test/html'
 # - task: DownloadBuildArtifacts@0
 #   inputs:
 #     buildType: 'current'
