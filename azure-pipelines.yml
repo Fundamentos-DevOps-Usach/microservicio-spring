@@ -1,7 +1,6 @@
+trigger: ['feature-ms-raulRiquelme-labFinal'] 
 pool:
   vmImage: ubuntu-latest
-trigger: 
-- feature-ms-raulRiquelme-labFinal 
 steps:
 - task: Gradle@3
   displayName: 'Build'
@@ -38,19 +37,24 @@ steps:
   inputs:
     SonarCloud: 'Sonarcloud'
     organization: 'fundamentos-devops-usach'
+    scannerMode: 'MSBuild'
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
     extraProperties: |
       sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
-
 - task: Gradle@3
   inputs:
-      gradleWrapperFile: 'gradlew'
-      tasks: 'build'
-      javaHomeOption: 'JDKVersion'
-      sonarQubeRunAnalysis: true
-      sqGradlePluginVersionChoice: 'specify'
-      sonarQubeGradlePluginVersion: '3.3'
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    codeCoverageToolOption: 'JaCoCo'
+    codeCoverageClassFilesDirectories: 'build/classes/java/main/'
+    javaHomeOption: 'JDKVersion'
+    sonarQubeRunAnalysis: true
+    sqGradlePluginVersionChoice: 'specify'
+    sonarQubeGradlePluginVersion: '3.3'
+    spotBugsAnalysis: false
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
@@ -80,59 +84,6 @@ steps:
           v$(Build.BuildId)
           latest
     Dockerfile: '**/Dockerfile'
-        
-  # - job: infrastructura
-  #   dependsOn: buildImage
-  #   steps:     
-  #   - task: TerraformInstaller@0
-  #     inputs:
-  #       terraformVersion: '1.2.3'
-  #     displayName: Instalacion Terraform
-
-  #   - script: |
-  #         ssh-keygen -t rsa -b 4096 -N "VeryStrongSecret123!" -C "$(CORREO)" -q -f ~/.ssh/id_rsa
-  #         SSH_KEY=$(cat ~/.ssh/id_rsa.pub)
-  #         echo $SSH_KEY
-  #         echo "##vso[task.setvariable variable=SET_SSH;isOutput=true]$SSH_KEY"
-  #     name: setssh
-  #     displayName: Configuracion SSH
-  #   - task: TerraformCLI@0
-  #     inputs:
-  #       command: 'init'
-  #       backendType: 'azurerm'
-  #       backendServiceArm: 'azureSubscription'
-  #       allowTelemetryCollection: true
-  #     displayName: Terraform init
-  #     continueOnError: true
-  #   - task: TerraformCLI@0
-  #     inputs:
-  #       command: 'plan'
-  #       environmentServiceName: 'azureSubscription'
-  #       commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
-  #       allowTelemetryCollection: true
-  #     displayName: Terraform plan
-  #     continueOnError: true
-  #   - task: TerraformCLI@0
-  #     inputs:
-  #       command: 'import'
-  #       environmentServiceName: 'azureSubscription'
-  #       runAzLogin: true
-  #       commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
-  #       allowTelemetryCollection: true
-  #       resourceAddress: 'module.cluster.azurerm_resource_group.aks-getting-started'
-  #     continueOnError: true
-  #     displayName: Terraform import
-      
-  #   - task: TerraformCLI@0
-  #     inputs:
-  #       command: 'apply'
-  #       environmentServiceName: 'azureSubscription'
-  #       runAzLogin: true
-  #       commandOptions: '-var ssh_key="$(setssh.SET_SSH)" -var serviceprinciple_id="$(serviceprinciple_id)" -var serviceprinciple_key="$(serviceprinciple_key)" -var tenant_id="$(tenant_id)" -var subscription_id="$(subscription_id)"'
-  #       allowTelemetryCollection: true
-  #     displayName: Terraform apply
-  #     continueOnError: true
-
 - task: KubectlInstaller@0
   inputs:
     kubectlVersion: 'latest'
