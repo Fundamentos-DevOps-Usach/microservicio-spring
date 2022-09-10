@@ -45,12 +45,17 @@ steps:
 
 - task: Gradle@3
   inputs:
-      gradleWrapperFile: 'gradlew'
-      tasks: 'build jacocoTestReport'
-      javaHomeOption: 'JDKVersion'
-      sonarQubeRunAnalysis: true
-      sqGradlePluginVersionChoice: 'specify'
-      sonarQubeGradlePluginVersion: '3.3'
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build jacocoTestReport'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    codeCoverageToolOption: 'JaCoCo'
+    codeCoverageClassFilesDirectories: 'build/classes/main/'
+    javaHomeOption: 'JDKVersion'
+    sonarQubeRunAnalysis: true
+    sqGradlePluginVersionChoice: 'specify'
+    sonarQubeGradlePluginVersion: '3.3'
+    spotBugsAnalysis: false
 - task: SonarCloudPublish@1
   inputs:
     pollingTimeoutSec: '300'
