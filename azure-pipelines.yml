@@ -41,11 +41,12 @@ steps:
     projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
     projectName: 'microservicio-spring'
     extraProperties: |
-      sonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml- task: SonarCloudPrepare@1
+      sonar.coverage.jacoco.xmlReportPaths=$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml
+
 - task: Gradle@3
   inputs:
       gradleWrapperFile: 'gradlew'
-      tasks: 'jacocoTestReport'
+      tasks: 'build jacocoTestReport'
       javaHomeOption: 'JDKVersion'
       sonarQubeRunAnalysis: true
       sqGradlePluginVersionChoice: 'specify'
