@@ -1,19 +1,142 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- main
-
+trigger: ['feature-ms-raulRiquelme-labFinal'] 
 pool:
   vmImage: ubuntu-latest
-
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- task: Gradle@3
+  displayName: 'Build'
+  inputs:
+    gradleWrapperFile: 'gradlew'
+    tasks: 'build jacocoTestReport'
+    publishJUnitResults: true
+    testResultsFiles: '**/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    sonarQubeRunAnalysis: false
+    spotBugsAnalysis: true
+- task: CopyFiles@2
+  displayName: 'Prepare artifact'
+  inputs:
+    sourceFolder: '$(Build.SourcesDirectory)'
+    contents: |
+        **/build/libs/*.jar
+        **/build/**/*.xml
+    targetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish artifact'
+  inputs:
+    pathToPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: appJar
+    publishLocation: 'Container'
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'JaCoCo'
+    summaryFileLocation: '$(Build.SourcesDirectory)/build/reports/jacoco/test/jacocoTestReport.xml'
+    reportDirectory: '$(Build.SourcesDirectory)/build/reports/jacoco/test/html'
+- task: DownloadBuildArtifacts@0
+  inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'appJar'
+      downloadPath: '$(Pipeline.Workspace)'
+  displayName: Descarga Jar
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    echo $(Build.ArtifactStagingDirectory)
+    cd $(Build.ArtifactStagingDirectory)
+    ls -l
+    echo $(Build.SourcesDirectory)
+    cd $(Build.SourcesDirectory)
+    ls -l
+    echo $(Pipeline.Workspace)
+    cd $(Pipeline.Workspace)
+    ls -l
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'Sonarcloud'
+    organization: 'fundamentos-devops-usach'
+    projectKey: 'Fundamentos-DevOps-Usach_microservicio-spring'
+    projectName: 'microservicio-spring'
+    extraProperties: |
+      sonar.coverage.jacoco.xmlReportPaths=$(Pipeline.Workspace)/appJar/build/reports/jacoco/test/jacocoTestReport.xml
+- task: Gradle@3
+  inputs:
+      gradleWrapperFile: 'gradlew'
+      tasks: 'build jacocoTestReport'
+      javaHomeOption: 'JDKVersion'
+      sonarQubeRunAnalysis: true
+      sqGradlePluginVersionChoice: 'specify'
+      sonarQubeGradlePluginVersion: '3.3'
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'
+- task: sonarcloud-buildbreaker@2
+  inputs:
+    SonarCloud: 'Sonarcloud'
+    organization: 'fundamentos-devops-usach'
+- task: DownloadBuildArtifacts@0
+  inputs:
+    buildType: 'current'
+    downloadType: 'single'
+    artifactName: 'appJar'
+    downloadPath: '$(Pipeline.Workspace)'
+- script: 'mkdir -p build/libs; mv $(Pipeline.Workspace)/appJar/build/libs/ build/; chmod -R 555 build/libs'
+  displayName: 'Artifact prepare' 
+# - task: Docker@2
+#   displayName: login DockerHub
+#   inputs:
+#     containerRegistry: 'DockerRegistryFundamentosDevOps'
+#     command: 'login'
+# - task: Docker@2
+#   inputs:
+#     containerRegistry: 'DockerRegistryFundamentosDevOps'
+#     repository: 'mawidanche/fundamentos-dev-ops-usach'
+#     command: 'buildAndPush'
+#     tags: |
+#           v$(Build.BuildId)
+#           latest
+#     Dockerfile: '**/Dockerfile'
+# - task: KubectlInstaller@0
+#   inputs:
+#     kubectlVersion: 'latest'
+# - task: Kubernetes@1
+#   inputs:
+#     connectionType: 'Azure Resource Manager'
+#     azureSubscriptionEndpoint: 'azureSubscription'
+#     azureResourceGroup: 'DevOpsFoundation'
+#     kubernetesCluster: 'labFinal'
+#     namespace: 'default'
+#     command: 'login'
+# - task: Kubernetes@1
+#   inputs:
+#     connectionType: 'Azure Resource Manager'
+#     azureSubscriptionEndpoint: 'azureSubscription'
+#     azureResourceGroup: 'DevOpsFoundation'
+#     kubernetesCluster: 'labFinal'
+#     command: 'apply'
+#     arguments: '-f kubernetes/deployment-app.yaml'
+#     secretType: 'dockerRegistry'
+#     containerRegistryType: 'Azure Container Registry'
+#     azureSubscriptionEndpointForSecrets: 'azureSubscription'
+
+# - task: Kubernetes@1
+#   inputs:
+#     connectionType: 'Azure Resource Manager'
+#     azureSubscriptionEndpoint: 'azureSubscription'
+#     azureResourceGroup: 'DevOpsFoundation'
+#     kubernetesCluster: 'labFinal'
+#     namespace: 'default'
+#     command: 'expose'
+#     arguments: 'deployment lab-deployment --type=LoadBalancer --name=lab-app'
+#     secretType: 'dockerRegistry'
+#     containerRegistryType: 'Azure Container Registry'
+#     azureSubscriptionEndpointForSecrets: 'azureSubscription'
+#   continueOnError: true
+
+# - script: |
+#       ipApp=$(kubectl get services lab-app --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+#       echo $ipApp
+#       URLApp=http://$ipApp:8085
+#       echo $URLApp
+#       echo "##vso[task.setvariable variable=appDeploy;isOutput=true]$URLApp"
+#   name: getip
+#   displayName: Get IP
