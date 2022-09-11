@@ -3,8 +3,6 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-workspace:
-      clean: outputs | resources | all # what to clean up before the job
   - task: Gradle@3
     displayName: 'Build'
     inputs:
