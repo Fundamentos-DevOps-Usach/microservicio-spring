@@ -19,5 +19,4 @@ public class GreetingController {
 
 		return service.greet();
 	}
-
 }
