@@ -19,11 +19,4 @@ public class GreetingController {
 
 		return service.greet();
 	}
-
-	@RequestMapping("/dismiss")
-	public @ResponseBody String dismiss() {
-
-		return service.dismiss();
-	}
-
 }

@@ -8,8 +8,4 @@ public class GreetingService {
 		return "Hello, World ";
 	}
 
-	public String dismiss(){
-		return "Bye";
-	}
-
 }
