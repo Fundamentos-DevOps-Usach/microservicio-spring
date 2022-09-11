@@ -85,7 +85,6 @@ stages:
 - stage: Deployment
   jobs:
   - job: Image
-    dependsOn: sonar
     displayName: Image
     steps:
       - task: Docker@2
@@ -103,7 +102,6 @@ stages:
                 latest
           Dockerfile: '**/Dockerfile'
   - job: 
-    dependsOn: Image
     displayName: Deploy
     steps:
       - task: KubectlInstaller@0
