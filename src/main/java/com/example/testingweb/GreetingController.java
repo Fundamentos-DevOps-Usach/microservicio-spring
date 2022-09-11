@@ -19,4 +19,10 @@ public class GreetingController {
 
 		return service.greet();
 	}
+	@RequestMapping("/bye")
+	public @ResponseBody String bye() {
+
+		return service.bye();
+	}
+
 }

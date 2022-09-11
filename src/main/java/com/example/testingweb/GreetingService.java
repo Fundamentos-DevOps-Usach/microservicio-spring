@@ -7,5 +7,7 @@ public class GreetingService {
 	public String greet() {
 		return "Finaliza el curso DevOps Foundation v2 - Raul Riquelme";
 	}
-
+	public String bye() {
+		return "Adios";
+	}
 }
