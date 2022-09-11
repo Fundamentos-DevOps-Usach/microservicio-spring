@@ -79,11 +79,13 @@ stages:
           downloadType: 'single'
           artifactName: 'appJar'
           downloadPath: '$(Pipeline.Workspace)'
+
       - script: 'mkdir -p build/libs; mv $(Pipeline.Workspace)/appJar/build/libs/ build/; chmod -R 555 build/libs'
         displayName: 'Artifact prepare' 
-- stage: Deploy
+- stage: Deployment
   jobs:
-  - job: 
+  - job: Image
+    dependsOn: sonar
     displayName: Image
     steps:
       - task: Docker@2
@@ -101,6 +103,7 @@ stages:
                 latest
           Dockerfile: '**/Dockerfile'
   - job: 
+    dependsOn: Image
     displayName: Deploy
     steps:
       - task: KubectlInstaller@0
